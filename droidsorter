@@ -1,0 +1,37 @@
+#!/usr/bin/env ruby
+
+accepted_formats = ['.png', '.jpg']
+
+Dir.entries('.').each do |f|
+	if accepted_formats.include? File.extname(f)
+		extension = File.extname(f)
+		resolution = /.*@(.*)/.match(File.basename(f, '.*'))
+
+		if !resolution.nil?
+			resolution = resolution[1]
+
+			new_filename = File.basename(f, '.*')
+			new_filename = /(.*)@.*/.match(new_filename)[1]
+			new_filename = new_filename + extension
+			new_filename.gsub!('-', '_')
+
+			case resolution
+			when '1x'
+				Dir.mkdir('drawable-mdpi') unless Dir.exist?('drawable-mdpi')
+				File.rename(f, "drawable-mdpi/#{new_filename}")
+			when '1,5x'
+				Dir.mkdir('drawable-hdpi') unless Dir.exist?('drawable-hdpi')
+				File.rename(f, "drawable-hdpi/#{new_filename}")
+			when '2x'
+				Dir.mkdir('drawable-xhdpi') unless Dir.exist?('drawable-xhdpi')
+				File.rename(f, "drawable-xhdpi/#{new_filename}")
+			when '3x'
+				Dir.mkdir('drawable-xxhdpi') unless Dir.exist?('drawable-xxhdpi')
+				File.rename(f, "drawable-xxhdpi/#{new_filename}")
+			when '4x'
+				Dir.mkdir('drawable-xxxhdpi') unless Dir.exist?('drawable-xxxhdpi')
+				File.rename(f, "drawable-xxxhdpi/#{new_filename}")
+			end
+		end
+	end
+end
